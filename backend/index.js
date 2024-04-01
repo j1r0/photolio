@@ -1,9 +1,11 @@
 import express from "express";
 import mysql from "mysql2";
+import cors from "cors";
 
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 
 // Create database connection
 const db = mysql.createConnection({
@@ -36,6 +38,7 @@ app.post("/Photos", (req, res) => {
     return res.json("Photo has been inserted");
   });
 });
+
 app.listen(8800, () => {
   console.log("Connected to backend!");
 });
