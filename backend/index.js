@@ -36,7 +36,7 @@ app.get("/", (req, res) => {
   res.json("ooga booga");
 });
 
-// Fetch Data
+// Retrieve Photos
 app.get("/Photos", (req, res) => {
   const q = "SELECT * FROM Photos";
   db.query(q, (err, data) => {
@@ -44,7 +44,18 @@ app.get("/Photos", (req, res) => {
     return res.json(data);
   });
 });
+app.get("/Photos/:photoID", (req, res) => {
+  const photoID = req.params.photoID;
+  const sql = "SELECT * FROM Photos WHERE photoID = ?";
 
+  db.query(sql, [photoID], (err, data) => {
+    if (err) return res.json(err);
+    return res.json(data);
+    })
+});
+
+
+// Upload Photos
 app.post("/upload", upload.single('image'), (req, res) => {
   const image = req.file;
   const dimensions = imageSize(`public/images/` + image.filename);
@@ -61,19 +72,16 @@ app.post("/upload", upload.single('image'), (req, res) => {
   
   });
 
-  app.delete("/Photos/:id", (req, res) => {
-    const id = req.params.id;
-    const sql = "DELETE FROM Photos WHERE id = ?";
   
-    db.query(sql, id, (err, result) => {
-      if (err) {
-        console.log(err);
-        return res.json({Message: "Error"});
-      } else {
-        console.log(result);
-        return res.json({Status: "Success"});
-      }
-    });
+
+  app.delete("/Photos/:photoID", (req, res) => {
+    const photoID = req.params.photoID;
+    const sql = "DELETE FROM Photos WHERE photoID = ?";
+  
+    db.query(sql, [photoID], (err, result) => {
+      if (err) return res.json(err);
+      return res.json("Photo has been deleted");
+  })
   });
   
 });
@@ -93,3 +101,4 @@ app.post("/Photos", (req, res) => {
 app.listen(8800, () => {
   console.log("Connected to backend!");
 });
+

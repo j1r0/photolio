@@ -19,6 +19,7 @@
   width: 100%;
   border-radius: 20px;
   overflow: hidden;
+  cursor: pointer;
 }
 
 @media (min-width: 576px) {
@@ -29,6 +30,7 @@
 @media (min-width: 768px) {
   .photos-layout {
     column-count: 3;
+    margin: 0 200px;
   }
 }
 @media (min-width: 992px) {
@@ -40,19 +42,10 @@
 @media (min-width: 1200px) {
   .photos-layout {
     column-count: 3;
+    margin: 0 300px;
+
 
   }
 }
 
-.overlay {
-  position: fixed;
-  width: 50%;
-  text-align: center;
-  background-color: red;
-  border-radius: 10px;
-  font-size: 20px;
-  height: 30px;
-  opacity: 0;
-  transition: opacity .2s ease-out;
-}
 
