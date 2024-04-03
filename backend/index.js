@@ -16,7 +16,8 @@ const storage = multer.diskStorage({
     cb(null, "public/images")
   },
   filename: (req, file, cb) => {
-    cb(null, file.fieldname + "_" + Date.now() + path.extname(file.originalname))
+    console.log(file);
+    cb(null, file.originalname);
   }
 });
 
@@ -60,31 +61,46 @@ app.post("/upload", upload.single('image'), (req, res) => {
   const image = req.file;
   const dimensions = imageSize(`public/images/` + image.filename);
 
-  const sql = "INSERT INTO Photos (fileName, fileSize, fileType, height, width) VALUES (?, ?, ?, ?, ?)";
-  db.query(sql, [image.filename, image.size, dimensions.type, dimensions.height, dimensions.width], (err, result) => {
+  const sqlCheck = "SELECT * FROM Photos WHERE fileName = ?";
+  db.query(sqlCheck, [image.filename], (err, data) => {
     if (err) {
       console.log(err);
-      return res.json({Message: "Error"})}
-    else {
-      console.log(result);
-      return res.json({Status: "Success"});
+      return res.json({ Message: "Error" });
+    } else {
+      if (data.length > 0) {
+        return res.json({ Message: "Photo already exists" });
+      } else {
+        const sql = "INSERT INTO Photos (fileName, fileSize, fileType, height, width) VALUES (?, ?, ?, ?, ?)";
+        db.query(sql, [image.filename, image.size, dimensions.type, dimensions.height, dimensions.width], (err, result) => {
+          if (err) {
+            console.log(err);
+            return res.json({ Message: "Error" });
+          } else {
+            console.log(result);
+            return res.json({ Status: "Success" });
+          }
+        });
+      }
     }
-  
   });
+});
 
   
 
   app.delete("/Photos/:photoID", (req, res) => {
     const photoID = req.params.photoID;
-    const sql = "DELETE FROM Photos WHERE photoID = ?";
-  
+    const sql = "DELETE FROM Photos WHERE (photoID = ?)";
     db.query(sql, [photoID], (err, result) => {
-      if (err) return res.json(err);
-      return res.json("Photo has been deleted");
+      if (err) {
+        console.log(err);
+        return res.json({Message: "Error"})}
+      else {
+        console.log(result);
+        return res.json({Status: "Success"});
+        
+      }
   })
   });
-  
-});
 
 // Insert Data
 app.post("/Photos", (req, res) => {

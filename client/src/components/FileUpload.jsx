@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { Button, Icon, IconButton } from "@chakra-ui/react";
+import { DownloadIcon } from "@chakra-ui/icons";
 
 function FileUpload() {
   const [file, setFile] = useState();
@@ -17,6 +19,7 @@ function FileUpload() {
       .then((res) => {
         if (res.data.Status === "Success") {
           console.log(res.data.Status);
+          window.location.reload();
         } else {
             console.log(res.data.Message);
         }
@@ -25,10 +28,16 @@ function FileUpload() {
   };
   return (
     <div className="container">
-      <input type="file" onChange={handleFile} />
-      <button onClick={handleUpload}>Upload Photo</button>
+      <label>
+      {file ? (
+          <IconButton as="span" className='upload-button' onClick={handleUpload} aria-label="Upload Photo" icon={<DownloadIcon />} variant='solid' colorScheme="blackAlpha">
+          </IconButton>
+        ) : (
+          <><input type="file" onChange={handleFile} style={{ display: 'none' }} /><IconButton as="span" className='upload-button' aria-label="Upload Photo" icon={<DownloadIcon />} variant='outline' colorScheme="blackAlpha"></IconButton></>
+        )}
+      </label>
       <br />
-      <img src = {`http://localhost:8800/images/` + data.image} alt = "" />
+      <img src={`http://localhost:8800/images/` + data.image} alt="" />
     </div>
   );
 }
