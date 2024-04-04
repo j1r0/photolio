@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
 import FileDelete from './FileDelete';
+import FileUpdate from './FileUpdate';
+import ModalStyle from './ModalStyle.css';
 import {
   Modal,
   ModalOverlay,
@@ -10,59 +12,65 @@ import {
   ModalBody,
   ModalCloseButton,
   Button,
-  useDisclosure
+  useDisclosure,
+  IconButton,
 } from '@chakra-ui/react';
 
 
 export default function PhotoPopup(photo) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedPhoto, setSelectedPhoto] = useState({});
-
-
-  const OverlayOne = () => (
-    <ModalOverlay
-      bg='blackAlpha.200'
-      backdropFilter='blur(10px)'
-    />
-  )
-  const [overlay, setOverlay] = useState(<OverlayOne />);
-
  
 
   return (
     <>
       <div>
-        <div className='close' key={photo.id}>
+        <div className='close' key={photo.photoID}>
           <img
-            src={`http://localhost:8800/images/` + photo.fileName}
+            src={`http://localhost:8800/images/` + photo.fileName + photo.fileType}
             alt=''
             onClick={() => {
               setSelectedPhoto(photo);
-              setOverlay(<OverlayOne />);
               onOpen();
             }}
           />
         </div>
       </div>
-      <Modal isOpen={isOpen} onClose={onClose} isCentered={'true'} size={'xl'} scrollBehavior={'inside'}>
+      <Modal isOpen={isOpen} onClose={onClose} isCentered={'true'} size={'full'} scrollBehavior={'inside'}>
         <ModalOverlay bg='blackAlpha.200'
       backdropFilter='blur(10px)'/>
-        <ModalContent>
+        <ModalContent bgColor='transparent' boxShadow='none' minWidth='70vw' minHeight='90%'>
           <ModalHeader>{selectedPhoto.fileName}</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
+          <ModalCloseButton bg='blackAlpha.200'
+      backdropFilter='blur(10px)' />
+          <ModalBody textColor='white' display='flex' justifyContent='center'>
+            <div className='modal-photo'>
             <img
-              className='modal-image'
-              src={`http://localhost:8800/images/` + selectedPhoto.fileName}
-              alt='' style={{ width: '1000px'}}
+              src={`http://localhost:8800/images/` + selectedPhoto.fileName + selectedPhoto.fileType}
+              alt='' style={{ borderRadius: '10px'}}
             />
-            <p>{selectedPhoto.photoID}</p>
-            <p>{selectedPhoto.fileType}</p>
-            <p>{((selectedPhoto.fileSize)/1000000).toPrecision(3)+ 'MB'}</p>
-            <p>{selectedPhoto.height +'px ' + 'x ' + selectedPhoto.width + 'px'}</p>
+            
+            <p>
+              PhotoID: {selectedPhoto.photoID}
+              <br/>
+              File Type: {selectedPhoto.fileType}
+              <br/>
+              File Size: {((selectedPhoto.fileSize)/1000000).toPrecision(3)+ 'MB'}
+              <br/>
+              Height: {selectedPhoto.height}px 
+              <br/>
+              Width: {selectedPhoto.width}px
+              </p>
+
+
+            </div>
           </ModalBody>
-          <ModalFooter >
-            {FileDelete(photo)}
+      
+          <ModalFooter justifyContent='center'>
+            <Button onClick={onClose}>Close</Button>
+            <Button maxWidth='min-content' maxHeight='inherit'>{FileDelete(photo)} </Button>
+            <Button maxWidth='min-content' maxHeight='inherit'>{FileUpdate(photo)} </Button>
+
           </ModalFooter>
         </ModalContent>
       </Modal>

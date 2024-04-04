@@ -18,10 +18,13 @@ function FileUpload() {
     axios.post("http://localhost:8800/upload", formData)
       .then((res) => {
         if (res.data.Status === "Success") {
-          console.log(res.data.Status);
           window.location.reload();
+          console.log(res.data.Status);
+  
         } else {
+          window.location.reload();
             console.log(res.data.Message);
+
         }
       })
       .catch((err) => console.error(err));
@@ -29,11 +32,15 @@ function FileUpload() {
   return (
     <div className="container">
       <label>
-      {file ? (
+      {(file) ? (
+        <>
+        {console.log (`http://localhost:8800/images/${file.name}`)}
           <IconButton as="span" className='upload-button' onClick={handleUpload} aria-label="Upload Photo" icon={<DownloadIcon />} variant='solid' colorScheme="blackAlpha">
           </IconButton>
+          </>
         ) : (
-          <><input type="file" onChange={handleFile} style={{ display: 'none' }} /><IconButton as="span" className='upload-button' aria-label="Upload Photo" icon={<DownloadIcon />} variant='outline' colorScheme="blackAlpha"></IconButton></>
+          <><input type="file" accept="image/*" onChange={handleFile} style={{ display: 'none' }} />
+          <IconButton as="span" className='upload-button' aria-label="Upload Photo" icon={<DownloadIcon />} variant='outline' colorScheme="blackAlpha"></IconButton></>
         )}
       </label>
       <br />

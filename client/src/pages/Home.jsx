@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import axios from "axios";
 import FileUpload from "../components/FileUpload";
 import PhotoPopup from "../components/PhotoPopup";
+import DeleteAll from "../components/DeleteAll";
 
 
 
@@ -42,6 +43,7 @@ const Home = () => {
       <h1>Photolio</h1>
       <FileUpload />
       <PhotosLayout photos = {photos}/>
+      <DeleteAll />
     </div>
   );
 };

@@ -1,50 +1,47 @@
-.modal-content {
-    margin: 0 auto;
-    margin-top: 10px;
-    
-    padding: 10px;
 
+  .modal-photo{
+    display: flex;
+    justify-content: center;
   }
 
-.modal-content img {
+  .modal-photo img {
     border-radius: 20px;
-    height: 100vh;
+
     overflow: hidden;
     object-fit: contain;
     display: block;
-  }
-
-.modal-content h1, p{
-    font-size: 1rem;
-    display: block;
-}
-
-
-  .modal-buttons{
-    display: flex;
-    justify-content: center;
-
-    margin: 0 auto;
-    margin-bottom: 20px;
-  }
-
-  .modal-buttons button {
-    margin: 0 10px;
-    padding: 5px 10px;
-    border-radius: 10px;
-    border: none;
-    cursor: pointer;
-  }
-
-  .delete-button {
-    background-color: rgb(255, 0, 0);
-    color:rgb(255, 255, 255);
-
-    
-  }
-  
-  .modal-overlay {
-    background: rgba(0, 0, 0, 0.5);
     transition: ease-in 0.3s;
   }
- 
+
+  .modal-photo img:hover {
+    transform: scale(1.01);
+    filter: brightness(60%) blur(1px) grayscale(1);
+    transition: ease-in-out 0.3s;
+  }
+  
+
+  .modal-photo p{
+    display: none;
+    position: absolute;
+    bottom: -20px;
+    font-weight: bold;
+    font-size: .7rem;
+    text-shadow: rgba(0, 0, 0, 0.5);
+
+    transition: display 0.3s ease-in-out;
+  }
+
+
+  .modal-photo img:hover + p {
+
+    display: flex;
+    position: absolute;
+    bottom: 70px;
+    font-weight: bold;
+    font-size: .7rem;
+    text-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    
+    transition: display 0.3s ease-in-out;
+  }
+
+  

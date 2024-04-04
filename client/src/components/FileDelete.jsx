@@ -4,7 +4,6 @@ import { Button } from "@chakra-ui/react";
 
 function FileDelete(photo) {
     const [photoID] = useState(photo.photoID); 
-    console.log(photoID);
     const handleDelete = () => {
         axios
             .delete(`http://localhost:8800/Photos/${photoID}`)
@@ -27,3 +26,4 @@ function FileDelete(photo) {
 }
 
 export default FileDelete;
+
