@@ -44,9 +44,11 @@ function FileUpdate(photo) {
 
   return (
     <div>
-      <Button onClick={onOpen} colorScheme="red">
+      <Button onClick={onOpen} colorScheme="blue">
         UPDATE
       </Button>
+
+
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>

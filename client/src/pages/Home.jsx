@@ -3,6 +3,8 @@ import axios from "axios";
 import FileUpload from "../components/FileUpload";
 import PhotoPopup from "../components/PhotoPopup";
 import DeleteAll from "../components/DeleteAll";
+import SearchBar from "../components/SearchBar";
+import PhotosLayout from "../components/PhotosLayout";
 
 
 
@@ -21,26 +23,15 @@ const Home = () => {
     fetchPhotos();
   }, []);
 
-  const PhotosLayout = ({ photos }) => {
-    return (
-      <div className="photos-layout">
-        
-        {photos.map((photo) => (
-            <div className="photo" key={photo.photoID}> 
-                {PhotoPopup(photo)}
-              
-            </div>
-        ))}
 
-      </div>
-    );
-  };
+{<PhotosLayout photos = {photos}/>}
 
 
 
   return (
     <div>
       <h1>Photolio</h1>
+      <SearchBar />
       <FileUpload />
       <PhotosLayout photos = {photos}/>
       <DeleteAll />

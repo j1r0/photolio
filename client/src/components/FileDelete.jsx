@@ -26,4 +26,3 @@ function FileDelete(photo) {
 }
 
 export default FileDelete;
-

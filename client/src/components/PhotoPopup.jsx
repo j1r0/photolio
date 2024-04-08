@@ -39,11 +39,11 @@ export default function PhotoPopup(photo) {
       <Modal isOpen={isOpen} onClose={onClose} isCentered={'true'} size={'full'} scrollBehavior={'inside'}>
         <ModalOverlay bg='blackAlpha.200'
       backdropFilter='blur(10px)'/>
-        <ModalContent bgColor='transparent' boxShadow='none' minWidth='70vw' minHeight='90%'>
-          <ModalHeader>{selectedPhoto.fileName}</ModalHeader>
+        <ModalContent bgColor='transparent' boxShadow='none' minWidth='70vw' minHeight='100%'>
+          <ModalHeader textAlign='center' paddingBottom='0'>{selectedPhoto.fileName}</ModalHeader>
           <ModalCloseButton bg='blackAlpha.200'
       backdropFilter='blur(10px)' />
-          <ModalBody textColor='white' display='flex' justifyContent='center'>
+          <ModalBody textColor='white' display='flex' justifyContent='center'mt='0'>
             <div className='modal-photo'>
             <img
               src={`http://localhost:8800/images/` + selectedPhoto.fileName + selectedPhoto.fileType}
@@ -67,9 +67,10 @@ export default function PhotoPopup(photo) {
           </ModalBody>
       
           <ModalFooter justifyContent='center'>
-            <Button onClick={onClose}>Close</Button>
-            <Button maxWidth='min-content' maxHeight='inherit'>{FileDelete(photo)} </Button>
-            <Button maxWidth='min-content' maxHeight='inherit'>{FileUpdate(photo)} </Button>
+            <div className='footer'>
+            {FileDelete(photo)}
+            {FileUpdate(photo)}
+            </div>
 
           </ModalFooter>
         </ModalContent>

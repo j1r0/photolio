@@ -15,7 +15,7 @@
 
   .modal-photo img:hover {
     transform: scale(1.01);
-    filter: brightness(60%) blur(1px) grayscale(1);
+    filter: brightness(60%) grayscale(1);
     transition: ease-in-out 0.3s;
   }
   
@@ -43,5 +43,18 @@
     
     transition: display 0.3s ease-in-out;
   }
+
+  .footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .footer Button:hover {
+    transform: scale(1.05);
+    transition: ease-in-out 0.3s;
+    
+  }
+
 
   

@@ -64,6 +64,31 @@ app.get("/Photos/:photoID", (req, res) => {
     return res.json(data);
   });
 });
+// Get fileName from all photos
+app.get("/Photos/fileName", (req, res) => {
+
+  const query = "SELECT fileName, photoID FROM Photos";
+
+  db.query(query, (err, data) => {
+    if (err) {
+      console.error("Error executing SQL query:", err);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+    
+    if (data.length === 0) {
+      console.log("No photo found with the given photoID");
+      return res.status(404).json({ Message: "No photo found" });
+    }
+    
+    const photos = data.map((photo) => ({
+      fileName: photo.fileName,
+      photoID: photo.photoID
+    }));
+    console.log("Photos fetched successfully:", photos);
+    return res.json({ photos });
+  });
+});
+
 
 // Update Photos
 app.put("/Photos/:photoID", (req, res) => {
