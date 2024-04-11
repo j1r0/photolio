@@ -2,28 +2,25 @@ import React, { useState } from "react";
 import axios from "axios";
 import {
   Button,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
   FormControl,
   FormLabel,
   Input,
   FormHelperText,
+  useToast
 } from "@chakra-ui/react";
 
 function FileUpdate(photo) {
   const [photoID] = useState(photo.photoID);
   const [updateData, setUpdateData] = React.useState({});
-  const [isOpen, setIsOpen] = React.useState(false);
+  const toast = useToast();
 
-  const onClose = () => setIsOpen(false);
-  const onOpen = () => setIsOpen(true);
-
-  const handleChange = (e) => { 
+  const handleChange = (e) => {
     setUpdateData({ fileName: e.target.value });
   };
 
@@ -33,28 +30,37 @@ function FileUpdate(photo) {
       .then((res) => {
         if (res.data.Status === "Success") {
           console.log(res.data.Status);
-          return res.data.Status;
+          toast({
+            title: "Photo Updated",
+            status: "success",
+            duration: 1000,
+            position: "top-left"
+          });
         } else {
           console.log(res.data.Message);
-          return res.data.Message;
-        } 
+          toast(({
+            title: "Photo Not Updated",
+            status: 'error',
+            duration:1000,
+            position: 'top-left'
+          }))
+
+        }
       })
       .catch((err) => console.error(err));
   };
 
   return (
     <div>
-      <Button onClick={onOpen} colorScheme="blue">
-        UPDATE
-      </Button>
-
-
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Update Name</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
+      <Popover>
+        <PopoverTrigger>
+          <Button colorScheme="blue" boxShadow='md'>
+            UPDATE
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent>
+          <PopoverHeader>Update Photo Metadata</PopoverHeader>
+          <PopoverBody>
             <FormControl>
               <FormLabel>Photo Name</FormLabel>
               <Input
@@ -64,24 +70,21 @@ function FileUpdate(photo) {
               />
               <FormHelperText>Update the photo name.</FormHelperText>
             </FormControl>
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={() => {
+          </PopoverBody>
+          <PopoverFooter justifyContent={'center'}>
+
+            <Button mr={3} onClick={() => {
                 handleUpdate();
-                onClose();
             }}>
               Update
             </Button>
-            <Button onClick={onClose}>Cancel</Button>
+
+            </PopoverFooter>
             
-          </ModalFooter>
-        </ModalContent>
-        
-      </Modal>
+        </PopoverContent>
+      </Popover>
     </div>
-    
   );
 }
 
 export default FileUpdate;
-

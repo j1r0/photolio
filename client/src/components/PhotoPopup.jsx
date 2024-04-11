@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import "bootstrap/dist/css/bootstrap.min.css";
 import FileDelete from './FileDelete';
 import FileUpdate from './FileUpdate';
@@ -17,13 +18,25 @@ import {
 } from '@chakra-ui/react';
 
 
-export default function PhotoPopup(photo) {
+export default function PhotoPopup({photo}) { 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedPhoto, setSelectedPhoto] = useState({});
- 
+  const [tags, setTags] = useState([]);
+
+  
+  const handleTags = () => {
+    axios.get(`http://localhost:8800/Photos/${photo.photoID}/tags`)
+    .then((res) => {
+      setTags(res.data);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+  } 
 
   return (
-    <>
+    ((photo === null) ? (<></>) : (<>
+    
       <div>
         <div className='close' key={photo.photoID}>
           <img
@@ -31,6 +44,7 @@ export default function PhotoPopup(photo) {
             alt=''
             onClick={() => {
               setSelectedPhoto(photo);
+              handleTags();
               onOpen();
             }}
           />
@@ -41,8 +55,7 @@ export default function PhotoPopup(photo) {
       backdropFilter='blur(10px)'/>
         <ModalContent bgColor='transparent' boxShadow='none' minWidth='70vw' minHeight='100%'>
           <ModalHeader textAlign='center' paddingBottom='0'>{selectedPhoto.fileName}</ModalHeader>
-          <ModalCloseButton bg='blackAlpha.200'
-      backdropFilter='blur(10px)' />
+          <ModalCloseButton/>
           <ModalBody textColor='white' display='flex' justifyContent='center'mt='0'>
             <div className='modal-photo'>
             <img
@@ -60,6 +73,8 @@ export default function PhotoPopup(photo) {
               Height: {selectedPhoto.height}px 
               <br/>
               Width: {selectedPhoto.width}px
+              <br/>
+              Tags: {tags.map((tag) => tag.tagName).join(', ')}
               </p>
 
 
@@ -76,5 +91,5 @@ export default function PhotoPopup(photo) {
         </ModalContent>
       </Modal>
     </>
-  );
+  )));
 }

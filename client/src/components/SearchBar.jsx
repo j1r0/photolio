@@ -1,49 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import PhotosLayout from './PhotosLayout';
+import { Input, Button, InputGroup, InputRightElement} from '@chakra-ui/react';
+import { Link, NavLink } from 'react-router-dom';
+const SearchBar = ({searchTerm}, {onSearchChange}) => {
 
-const SearchBar = () => {
-    const [searchTerm, setSearchTerm] = useState('');
-    const [searchResults, setSearchResults] = useState([]);
-    const res = [];
-
-    const handleInputChange = (event) => {
-        setSearchTerm(event.target.value);
-    };
-
-    const handleSearch = () => {
-        axios.get(`http://localhost:8800/Photos/`)
-            .then((response) => {
-                // Handle the response data here
-                console.log('Search results:', response.data);
-                response.data.map((photo) => {
-                    
-                    if (photo.fileName.includes(searchTerm)) {
-                        res.push(photo);   
-                    }
-                });
-                setSearchResults([...searchResults, ...res]);
-            })
-            .catch((error) => {
-                // Handle any errors here
-                console.error('Error searching:', error);
-            });
-    };
 
     return (
-        <div>
-            <input
+        <>
+<div >
+            <InputGroup size ='lg'> 
+            <Input pr="4.5rem"
+            variant='outline'
+            boxShadow= {'md'}
                 type="text"
                 placeholder="Search..."
                 value={searchTerm}
-                onChange={handleInputChange}
-            />
-            <button onClick={handleSearch}>Search</button>
+                onChange={onSearchChange}
 
-            <PhotosLayout photos={searchResults} />
-        
-        </div>
-    );
+            />
+                <InputRightElement w='4.5rem'>
+            <Button h='1.75rem'mr='0.5rem' size ='sm' > Search
+                    </Button>
+                    </InputRightElement>
+                    </InputGroup>
+
+     </div>
+        </>
+    )
 };
 
 export default SearchBar;
