@@ -12,40 +12,123 @@ import {
   FormLabel,
   Input,
   FormHelperText,
-  useToast
+  useToast,
+  Stack,
 } from "@chakra-ui/react";
+
+import MultiSelect from "./MultiSelect";
+import {
+  AsyncCreatableSelect,
+  AsyncSelect,
+  CreatableSelect,
+  Select,
+} from "chakra-react-select";
 
 function FileUpdate(photo) {
   const [photoID] = useState(photo.photoID);
-  const [updateData, setUpdateData] = React.useState({});
+  const [updateName, setName] = React.useState({});
   const toast = useToast();
 
-  const handleChange = (e) => {
-    setUpdateData({ fileName: e.target.value });
+  const [tags, setTags] = useState([]);
+  const [checkedTags, setCheckedTags] = useState([]);
+  const [checkedAlbums, setCheckedAlbums] = useState([]);
+  const [checkedCamera, setCheckedCamera] = useState([]);
+  const [album, setAlbum] = useState([]);
+  const [camera, setCamera] = useState([]);
+
+  const toasts = (res) => {
+    {
+      if (res.data.Status === "Success") {
+        console.log(res.data.Status);
+        toast({
+          title: "Photo Updated",
+          status: "success",
+          duration: 1000,
+          position: "top-left",
+        });
+      } else {
+        console.log(res.data.Message);
+        toast({
+          title: "Photo Not Updated",
+          status: "error",
+          duration: 1000,
+          position: "top-left",
+        });
+      }
+    }
   };
 
-  const handleUpdate = () => {
-    axios
-      .put(`http://localhost:8800/Photos/${photoID}`, updateData)
-      .then((res) => {
-        if (res.data.Status === "Success") {
-          console.log(res.data.Status);
-          toast({
-            title: "Photo Updated",
-            status: "success",
-            duration: 1000,
-            position: "top-left"
-          });
-        } else {
-          console.log(res.data.Message);
-          toast(({
-            title: "Photo Not Updated",
-            status: 'error',
-            duration:1000,
-            position: 'top-left'
-          }))
+  const handleChangeName = (e) => {
+    setName({ fileName: e.target.value });
+  };
 
-        }
+  const handleUpdateName = () => {
+    axios
+      .put(`http://localhost:8800/Photos/${photoID}`, updateName)
+      .then((res) => toasts(res))
+      .catch((err) => console.error(err));
+  };
+
+  const handleUpdateTags = () => {
+    checkedTags.map((tag) => {
+      axios
+        .post(`http://localhost:8800/Photos/${photoID}/tags`, {
+          tagName: tag.value,
+        })
+        .then((res) => toasts(res))
+        .catch((err) => console.error(err));
+    });
+  };
+  const handleUpdateAlbums = () => {
+    checkedAlbums.map((album) => {
+      axios
+        .post(`http://localhost:8800/Photos/${photoID}/albums`, {
+        photoID: photoID,
+        albumID: album.value,
+        })
+        .then((res) => toasts(res))
+        .catch((err) => console.error(err));
+    });
+  };
+
+  const handleUpdateCamera = () => {
+    axios
+      .put(`http://localhost:8800/Photos/${photoID}/camera`, {
+        make: checkedCamera.value[0],
+        model: checkedCamera.value[1],
+      })
+      .then((res) => toasts(res))
+      .catch((err) => console.error(err));
+};
+
+
+  const populateDropdown = () => {
+    axios
+      .get("http://localhost:8800/Tags")
+      .then((res) => {
+        setTags(
+          res.data.map((tag) => ({ label: tag.tagName, value: tag.tagName }))
+        );
+      })
+      .catch((err) => console.error(err));
+
+    axios
+      .get("http://localhost:8800/Albums")
+      .then((res) => {
+        setAlbum(res.data.map((album) => ({ label: album.albumName, value: album.albumID})));
+      })
+      .catch((err) => console.error(err));
+
+    axios
+      .get("http://localhost:8800/Cameras")
+      .then((res) => {
+        console.log("Loaded Cameras: ", res.data);
+        setCamera(
+          res.data.map((camera) => ({
+            label: camera.make + " " + camera.model,
+            value:[camera.make, camera.model],
+          }))
+        );
       })
       .catch((err) => console.error(err));
   };
@@ -54,33 +137,74 @@ function FileUpdate(photo) {
     <div>
       <Popover>
         <PopoverTrigger>
-          <Button colorScheme="blue" boxShadow='md'>
+          <Button colorScheme="blue" boxShadow="md" onClick={populateDropdown}>
             UPDATE
           </Button>
         </PopoverTrigger>
         <PopoverContent>
           <PopoverHeader>Update Photo Metadata</PopoverHeader>
           <PopoverBody>
-            <FormControl>
-              <FormLabel>Photo Name</FormLabel>
-              <Input
-                type="text"
-                placeholder={photo.fileName}
-                onChange={handleChange}
-              />
-              <FormHelperText>Update the photo name.</FormHelperText>
-            </FormControl>
-          </PopoverBody>
-          <PopoverFooter justifyContent={'center'}>
+            <Stack spacing={4}>
+              <FormControl>
+                <FormLabel>Photo Name</FormLabel>
+                <Input
+                  type="text"
+                  placeholder={photo.fileName}
+                  onChange={handleChangeName}
+                />
+                <FormHelperText>Update the photo name.</FormHelperText>
+              </FormControl>
 
-            <Button mr={3} onClick={() => {
-                handleUpdate();
-            }}>
+              <Select
+                isMulti={true}
+                options={tags}
+                placeholder="Select Tags"
+                menuPlacement="top"
+                value={checkedTags}
+                onChange={setCheckedTags}
+              />
+              <Select
+                isMulti={true}
+                options={album}
+                placeholder="Select Albums"
+                menuPlacement="top"
+                value={checkedAlbums}
+                onChange={setCheckedAlbums}
+              />
+              <Select
+                isMulti={false}
+                options={camera}
+                placeholder="Select Camera"
+                menuPlacement="top"
+
+                onChange={setCheckedCamera}
+              />
+              
+            </Stack>
+          </PopoverBody>
+          <PopoverFooter justifyContent={"center"}>
+            <Button
+              mr={3}
+              onClick={() => {
+                console.log("checked cam", checkedCamera)
+                if (updateName.length > 0) {
+                  handleUpdateName();
+                }
+                if (checkedTags.length > 0) {
+                  handleUpdateTags();
+                }
+                if (checkedAlbums.length > 0) {
+                  handleUpdateAlbums();
+                }
+                if (checkedCamera.value !== undefined) {
+                  handleUpdateCamera();
+                }
+                
+              }}
+            >
               Update
             </Button>
-
-            </PopoverFooter>
-            
+          </PopoverFooter>
         </PopoverContent>
       </Popover>
     </div>

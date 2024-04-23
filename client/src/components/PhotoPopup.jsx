@@ -22,17 +22,43 @@ export default function PhotoPopup({photo}) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedPhoto, setSelectedPhoto] = useState({});
   const [tags, setTags] = useState([]);
+  const [albums, setAlbums] = useState([]);
+  const [camera, setCamera] = useState({});
 
   
   const handleTags = () => {
     axios.get(`http://localhost:8800/Photos/${photo.photoID}/tags`)
     .then((res) => {
       setTags(res.data);
+      console.log("tags: ", res.data);
     })
     .catch((err) => {
       console.error(err);
     });
   } 
+
+  const handleCamera = () => {
+    axios.get(`http://localhost:8800/Photos/${photo.photoID}/camera/TakenWith`)
+    .then((res) => {
+      setCamera(res.data);
+      console.log("camera: ", res.data);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+  }
+
+  const handleAlbum = () => {
+    axios.get(`http://localhost:8800/Photos/${photo.photoID}/albums`)
+    .then((res) => {
+      setAlbums(res.data);
+      console.log("albums: ", res.data);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+  }
+
 
   return (
     ((photo === null) ? (<></>) : (<>
@@ -45,6 +71,8 @@ export default function PhotoPopup({photo}) {
             onClick={() => {
               setSelectedPhoto(photo);
               handleTags();
+              handleAlbum();
+              handleCamera();
               onOpen();
             }}
           />
@@ -56,8 +84,8 @@ export default function PhotoPopup({photo}) {
         <ModalContent bgColor='transparent' boxShadow='none' minWidth='70vw' minHeight='100%'>
           <ModalHeader textAlign='center' paddingBottom='0'>{selectedPhoto.fileName}</ModalHeader>
           <ModalCloseButton/>
-          <ModalBody textColor='white' display='flex' justifyContent='center'mt='0'>
-            <div className='modal-photo'>
+          <ModalBody textColor='white' display='flex' justifyContent='center'mt='0' textAlign='center'>
+            <div className='modal-photo' >
             <img
               src={`http://localhost:8800/images/` + selectedPhoto.fileName + selectedPhoto.fileType}
               alt='' style={{ borderRadius: '10px'}}
@@ -75,6 +103,10 @@ export default function PhotoPopup({photo}) {
               Width: {selectedPhoto.width}px
               <br/>
               Tags: {tags.map((tag) => tag.tagName).join(', ')}
+              <br/>
+              Album: {albums.map((album) => album.albumName).join(', ')}
+              <br/>
+              Camera: {camera[0] !== undefined ? (camera[0].make + ' ' + camera[0].model) : ('')}
               </p>
 
 
