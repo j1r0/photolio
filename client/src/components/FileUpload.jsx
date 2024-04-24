@@ -8,6 +8,7 @@ import {
   PopoverHeader,
   PopoverBody,
   PopoverFooter,
+  useToast,
   Stack
 } from "@chakra-ui/react";
 
@@ -15,7 +16,38 @@ import {
 function FileUpload() {
   const [file, setFile] = useState();
   const [data, setData] = useState([]);
-  
+  const toast = useToast();
+  const toasts = (res, id) => {
+    {
+      if (!toast.isActive(id)) {
+      if (res.data.Status === "Success") {
+        console.log(res.data.Message);
+        toast({
+          id,
+          title: res.data.Status,
+          description: res.data.Message + ". " + "Reloading the page...",
+          status: "success",
+          duration: 1000,
+          position: "top-left",
+        });
+      } else {
+        console.log(res.data.Message);
+        toast({
+          id,
+          title: res.data.Status,
+          description: res.data.Message,
+          status: "error",
+          duration: 1000,
+          position: "top-left",
+        });
+      }
+    }
+  }
+  };
+
+
+
+
   const handleFile = (e) => {
     setFile(e.target.files[0]);
   };
@@ -29,11 +61,13 @@ function FileUpload() {
       .post("http://localhost:8800/upload", formData)
       .then((res) => {
         if (res.data.Status === "Success") {
-          console.log(res.data.Status);
           setData(res.data);
-          console.log(res.data);
+          toasts(res, "uploadPhoto");
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
         } else {
-          console.log(res.data.Message);
+          toasts(res, "uploadPhoto");
         }
       })
       .catch((err) => console.error(err));

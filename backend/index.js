@@ -136,15 +136,15 @@ app.put("/Photos/:photoID", (req, res) => {
             ];
 
             fs.rename(filePath[0], filePath[1], (err, result) => {
-              if (err) return res.json({ Message: "Error" });
+              if (err) return res.json({ Status: "Error", Message: `File name already exists.`});
               // check if the new file name already exists
               else {
                 // update the file name in the database
                 const updateQuery =
                   "UPDATE Photos SET fileName = ? WHERE photoID = ?";
                 db.query(updateQuery, [newFileName, photoID], (err, result) => {
-                  if (err) return res.json({ Message: "Error" });
-                  return res.json({ Status: "Success" });
+                  if (err) return res.json({ Status: "Error", Message: `Photo ${photoID}: Name not updated`});
+                  return res.json({ Status: "Success", Message: `Photo ${photoID}: Name updated to ${newFileName}` });
                 });
               }
             });
@@ -176,10 +176,10 @@ app.post("/upload", upload.single("image"), (req, res) => {
   const queryCheck = "SELECT * FROM Photos WHERE fileName = ?";
   db.query(queryCheck, [photoName], (err, data) => {
     if (err) {
-      return res.json({ Message: "Error" });
+      return res.json({ Status: "Error", Message: "Photo not uploaded"});
     } else {
       if (data.length > 0) {
-        return res.json({ Message: "Photo already exists" });
+        return res.json({Status: "Error", Message: "Photo already exists" });
       } else {
         const insertQuery =
           "INSERT INTO Photos (fileName, fileSize, fileType, height, width) VALUES (?)";
@@ -192,9 +192,9 @@ app.post("/upload", upload.single("image"), (req, res) => {
         ];
         db.query(insertQuery, [values], (err, result) => {
           if (err) {
-            return res.json({ Message: "Error" });
+            return res.json({ Status: "Error", Message: "Photo not uploaded"});
           } else {
-            return res.json({ Status: "Success" });
+            return res.json({ Status: "Success", Message: "Photo uploaded" });
           }
         });
       }
@@ -213,15 +213,15 @@ app.delete("/Photos/:photoID", (req, res) => {
     const { fileName, fileType } = selected[0];
     const filePath = path.join(`public/images/${fileName + fileType}`);
     fs.unlink(filePath, (err, result) => {
-      if (err) return res.json({ Message: "Error" });
+      if (err) return res.json({ Status: "Error", Message : `Photo ${photoID} not deleted`});
 
       // delete the photo from the database
       const deleteQuery = "DELETE FROM Photos WHERE (photoID = ?)";
       db.query(deleteQuery, [photoID], (err, result) => {
         if (err) {
-          return res.json({ Message: "Error" });
+          return res.json({ Status: "Error", Message: `Photo ${photoID} not deleted`});
         } else {
-          return res.json({ Status: "Success" });
+          return res.json({ Status: "Success", Message: `Photo ${photoID} deleted` });
         }
       });
     });
@@ -233,12 +233,12 @@ app.delete("/Photos", (req, res) => {
   const imagesPath = "public/images";
   fs.readdir(imagesPath, (err, files) => {
     if (err) {
-      return res.json({ Message: "Error" });
+      return res.json({ Status: "Error", Message: "Error deleting photos"});
     } else {
       for (const file of files) {
         fs.unlink(path.join(imagesPath, file), (err) => {
           if (err) {
-            return res.json({ Message: "Error" });
+            return res.json({ Status: "Error", Message: "Error deleting photos" });
           }
         });
       }
@@ -247,9 +247,9 @@ app.delete("/Photos", (req, res) => {
   const query = "DELETE FROM Photos";
   db.query(query, (err, result) => {
     if (err) {
-      return res.json({ Message: "Error" });
+      return res.json({ Status: "Error", Message: "Error deleting photos"});
     } else {
-      return res.json({ Status: "Success" });
+      return res.json({ Status: "Success", Message: "All photos deleted" });
     }
   });
 });
@@ -260,8 +260,8 @@ app.post("/Photos", (req, res) => {
   const values = [req.body.fileName, req.body.fileSize, req.body.fileType];
 
   db.query(query, [values], (err, data) => {
-    if (err) return res.json(err);
-    return res.json("Photo has been inserted");
+    if (err) return res.json({ Status: "Error", Message: "Photo not added" });
+    return res.json({ Status: "Success", Message: "Photo added" });
   });
 });
 
@@ -302,8 +302,8 @@ app.post("/Tags", (req, res) => {
   const values = [req.body.tagName, req.body.description];
 
   db.query(query, [values], (err, data) => {
-    if (err) return res.json( err );
-    return res.json({ Status: "Success" });
+    if (err) return res.json({ Status: "Error", Message: "Tag not added"});
+    return res.json({ Status: "Success", Message: "Tag added"});
   });
 });
 
@@ -315,8 +315,8 @@ app.post("/Photos/:photoID/tags", (req, res) => {
   const values = [photoID, tagName];
 
   db.query(query, [values], (err, data) => {
-    if (err) return res.json( err );
-    return res.json({ Status: "Success" });
+    if (err) return res.json({ Status: "Error", Message: `Photo ${photoID}: Tag ${tagName} not added`});
+    return res.json({ Status: "Success", Message: `Photo ${photoID}: Tag ${tagName} added`});
   });
 });
 
@@ -329,7 +329,7 @@ app.delete("/Photos/:photoID/tags", (req, res) => {
 
   db.query(query, [values], (err, data) => {
     if (err) return res.json(err);
-    return res.json({ Status: "Success" });
+    return res.json({ Status: "Success", Message: "Tags removed"});
   });
 });
 
@@ -339,7 +339,7 @@ app.delete("/Tags/:tagName", (req, res) => {
   const query = "DELETE FROM Tags WHERE tagName = ?";
   db.query(query, [tagID], (err, data) => {
     if (err) return res.json(err);
-    return res.json({ Status: "Success" });
+    return res.json({ Status: "Success", Message: `Tag ${tagName} deleted`});
   });
 });
 
@@ -348,7 +348,7 @@ app.delete("/Tags", (req, res) => {
   const query = "DELETE FROM Tags";
   db.query(query, (err, data) => {
     if (err) return res.json(err);
-    return res.json({ Status: "Success" });
+    return res.json({ Status: "Success", Message: "All tags deleted"});
   });
 });
 
@@ -378,7 +378,7 @@ app.get("/Albums/:albumName", (req, res) => {
 // Retrieve all albums a photo is in
 app.get("/Photos/:photoID/albums", (req, res) => {
   const photoID = req.params.photoID;
-  const query = "SELECT * FROM inAlbum NATURAL JOIN Albums WHERE photoID = ?";
+  const query = "SELECT albumName FROM inAlbum NATURAL JOIN Albums WHERE photoID = ?";
   db.query(query, [photoID], (err, data) => {
     if (err) return res.json(err);
     return res.json(data);
@@ -391,8 +391,8 @@ app.post("/Albums/:albumName", (req, res) => {
   const albumName = req.params.albumName;
   const creationDate = new Date();
   db.query(query, [albumName, creationDate], (err, data) => {
-    if (err) return res.json(err);
-    return res.json({ Status: "Success" });
+    if (err) return res.json({Status: "Error", Message: `Error creating album ${albumName}`});
+    return res.json({ Status: "Success", Message: `Album ${albumName} created`});
   });
 });
 
@@ -403,8 +403,8 @@ app.post("/Photos/:photoID/albums", (req, res) => {
   const uploadDate = new Date();
   const query = "INSERT INTO InAlbum (photoID, albumID, uploadDate) VALUES (?, ?, ?)";
   db.query(query, [photoID, albumID, uploadDate], (err, data) => {
-    if (err) return res.json(err);
-    return res.json({ Status: "Success" });
+    if (err) return res.json({Status: "Error", Message: `Photo ${photoID}: Not added to album ${albumID}`});
+    return res.json({ Status: "Success", Message: `Photo ${photoID}: Added to album ${albumID}`});
   });
 });
 
@@ -414,8 +414,8 @@ app.delete("/Photos/:photoID/albums", (req, res) => {
   const albumID = req.body.albumID;
   const query = "DELETE FROM InAlbum WHERE photoID = ? AND albumID = ?";
   db.query(query, [photoID, albumID], (err, data) => {
-    if (err) return res.json(err);
-    return res.json({ Status: "Success" });
+    if (err) return res.json({Status: "Error", Message: `Photo ${photoID}: Not removed from album ${albumID}`});
+    return res.json({ Status: "Success", Message: `Photo ${photoID}: Removed from album ${albumID}`});
   });
 });
 
@@ -424,8 +424,8 @@ app.delete("/Albums/:albumName", (req, res) => {
   const albumName = req.params.albumName;
   const query = "DELETE FROM Albums WHERE albumName = ?";
   db.query(query, [albumName], (err, data) => {
-    if (err) return res.json(err);
-    return res.json({ Status: "Success" });
+    if (err) return res.json({Status: "Error", Message: `Error deleting album ${albumName}`});
+    return res.json({ Status: "Success", Message: `Album ${albumName} removed`});
   });
 });
 
@@ -433,8 +433,8 @@ app.delete("/Albums/:albumName", (req, res) => {
 app.delete("/Albums", (req, res) => {
   const query = "DELETE FROM Albums";
   db.query(query, (err, data) => {
-    if (err) return res.json(err);
-    return res.json({ Status: "Success" });
+    if (err) return res.json({Status: "Error", Message: "Error deleting albums"});
+    return res.json({ Status: "Success", Message: "All albums removed"});
   });
 });
 
@@ -473,7 +473,7 @@ app.get("/Photos/:make/:model", (req, res) => {
 // Retrieve the camera used to take a photo
 app.get("/Photos/:photoID/camera/TakenWith", (req, res) => {
   const photoID = req.params.photoID;
-  const query = "SELECT * FROM TakenWith WHERE photoID = ?";
+  const query = "SELECT make, model FROM TakenWith WHERE photoID = ?";
   db.query(query, [photoID], (err, data) => {
     if (err) return res.json(err);
     return res.json(data);
@@ -487,7 +487,7 @@ app.put("/Photos/:photoID/camera", (req, res) => {
   const queryCheck = "SELECT * FROM TakenWith WHERE photoID = ?";
   db.query(queryCheck, [photoID], (err, data) => {
     if (err) {
-      return res.json(err);
+      return res.json({ Status: "Error", Message: "Error updating camera" });
     }
     if (data.length === 0) {
       return res.json({ Status: "Error", Message: "No camera associated with this photo" });
@@ -496,10 +496,22 @@ app.put("/Photos/:photoID/camera", (req, res) => {
     const values = [make, model, photoID];
     db.query(query, values, (err, data) => {
       if (err) {
-        return res.json(err);
+        return res.json({ Status: "Error", Message: `Photo ${photoID}: Camera not updated`});
       }
-      return res.json({ Status: "Success" });
+      return res.json({ Status: "Success", Message: `Photo ${photoID}: Camera Updated`});
     });
+  });
+});
+
+// Add a camera to a photo
+app.post("/Photos/:photoID/camera", (req, res) => {
+  const photoID = req.params.photoID;
+  const { make, model } = req.body;
+  const query = "INSERT INTO TakenWith (photoID, make, model) VALUES (?, ?, ?)";
+  const values = [photoID, make, model];
+  db.query(query, values, (err, data) => {
+    if (err) return res.json({Status: "Error", Message: `PhotoID ${photoID}: Camera not added`});
+    return res.json({ Status: "Success", Message : `PhotoID ${photoID}: Camera Added`});
   });
 });
 
@@ -508,8 +520,8 @@ app.post("/Cameras", (req, res) => {
   const query = "INSERT INTO Cameras (make, model, dateReleased) VALUES (?, ?, ?)";
   const values = [make, model, dateReleased];
   db.query(query, values, (err, data) => {
-    if (err) return res.json(err);
-    return res.json({ Status: "Success" });
+    if (err) return res.json({Status: "Error", Message: "Error adding camera"});
+    return res.json({ Status: "Success", Message: "Camera Added"});
   });
 });
 
@@ -519,8 +531,8 @@ app.delete("/Photos/:photoID/cameras", (req, res) => {
   const { make, model } = req.body;
   const query = "DELETE FROM TakenWith WHERE photoID = ? AND make = ? AND model = ?";
   db.query(query, [photoID, make, model], (err, data) => {
-    if (err) return res.json(err);
-    return res.json({ Status: "Success" });
+    if (err) return res.json({Status: "Error", Message: `Photo ${photoID}: Camera ${make} ${model} not removed`});
+    return res.json({ Status: "Success", Message: `Photo ${photoID}: Camera ${make} ${model} removed`});
   });
 });
 
@@ -529,8 +541,8 @@ app.delete("/Cameras/:make/:model", (req, res) => {
   const { make, model } = req.params;
   const query = "DELETE FROM Cameras WHERE make = ? AND model = ?";
   db.query(query, [make, model], (err, data) => {
-    if (err) return res.json(err);
-    return res.json({ Status: "Success" });
+    if (err) return res.json({Status: "Error", Message: "Error deleting camera"});
+    return res.json({ Status: "Success", Message: `Camera ${make} ${model} removed`});
   });
 });
 
@@ -538,8 +550,8 @@ app.delete("/Cameras/:make/:model", (req, res) => {
 app.delete("/Cameras", (req, res) => {
   const query = "DELETE FROM Cameras";
   db.query(query, (err, data) => {
-    if (err) return res.json(err);
-    return res.json({ Status: "Success" });
+    if (err) return res.json({Status: "Error", Message: "Error deleting cameras"});
+    return res.json({ Status: "Success", Message: "All cameras removed"});
   });
 });
 

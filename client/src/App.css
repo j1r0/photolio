@@ -1,5 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+
 .App {
   padding: 10px;
+  font-family: 'Rubik', sans-serif;
+  font-weight: 100;
+}
+.search {
+  z-index: 1000;
 }
 
 .photos-layout {
@@ -12,7 +19,7 @@
   margin-bottom:1em;
   border-radius: 20px;
   box-sizing: border-box;
-
+  z-index: -1000;
 }
 .photo img {
   object-fit: fill;
@@ -20,14 +27,14 @@
   border-radius: 20px;
   overflow: hidden;
   cursor: pointer;
-  
-  transition: transform ease-in-out 0.3s;
+  filter: brightness(60%) grayscale(1);
+  transition: ease-in-out 0.3s;
 }
 
 .photo img:hover {
   transform: scale(1.02);
-  transition: transform ease-in-out 0.3s;
-  filter: brightness(60%) grayscale(1);
+  transition: ease-in-out 0.3s;
+  filter: none;
 }
 
 @media (min-width: 576px) {

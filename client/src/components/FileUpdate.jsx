@@ -15,14 +15,7 @@ import {
   useToast,
   Stack,
 } from "@chakra-ui/react";
-
-import MultiSelect from "./MultiSelect";
-import {
-  AsyncCreatableSelect,
-  AsyncSelect,
-  CreatableSelect,
-  Select,
-} from "chakra-react-select";
+import { Select } from "chakra-react-select";
 
 function FileUpdate(photo) {
   const [photoID] = useState(photo.photoID);
@@ -36,12 +29,15 @@ function FileUpdate(photo) {
   const [album, setAlbum] = useState([]);
   const [camera, setCamera] = useState([]);
 
-  const toasts = (res) => {
+  const toasts = (res, id) => {
     {
+      if (!toast.isActive(id)) {
       if (res.data.Status === "Success") {
-        console.log(res.data.Status);
+        console.log(res.data.Message);
         toast({
-          title: "Photo Updated",
+          id,
+          title: res.data.Status,
+          description: res.data.Message + ". " + "Please reload the page to see changes.",
           status: "success",
           duration: 1000,
           position: "top-left",
@@ -49,13 +45,16 @@ function FileUpdate(photo) {
       } else {
         console.log(res.data.Message);
         toast({
-          title: "Photo Not Updated",
+          id,
+          title: res.data.Status,
+          description: res.data.Message,
           status: "error",
           duration: 1000,
           position: "top-left",
         });
       }
     }
+  }
   };
 
   const handleChangeName = (e) => {
@@ -65,7 +64,7 @@ function FileUpdate(photo) {
   const handleUpdateName = () => {
     axios
       .put(`http://localhost:8800/Photos/${photoID}`, updateName)
-      .then((res) => toasts(res))
+      .then((res) => toasts(res, "updateName"))
       .catch((err) => console.error(err));
   };
 
@@ -75,7 +74,7 @@ function FileUpdate(photo) {
         .post(`http://localhost:8800/Photos/${photoID}/tags`, {
           tagName: tag.value,
         })
-        .then((res) => toasts(res))
+        .then((res) => toasts(res, "updateTags"))
         .catch((err) => console.error(err));
     });
   };
@@ -86,7 +85,7 @@ function FileUpdate(photo) {
         photoID: photoID,
         albumID: album.value,
         })
-        .then((res) => toasts(res))
+        .then((res) => toasts(res, "updateAlbums"))
         .catch((err) => console.error(err));
     });
   };
@@ -97,7 +96,17 @@ function FileUpdate(photo) {
         make: checkedCamera.value[0],
         model: checkedCamera.value[1],
       })
-      .then((res) => toasts(res))
+      .then((res) => {if (res.data.Status === "Error"){
+        axios.post(`http://localhost:8800/Photos/${photoID}/camera`, {
+          make: checkedCamera.value[0],
+          model: checkedCamera.value[1],
+        })
+        .then((res) => toasts(res , "updateCamera"))
+        .catch((err) => console.error(err));
+      } else {
+        toasts(res , "updateCamera");
+      }
+      })
       .catch((err) => console.error(err));
 };
 
