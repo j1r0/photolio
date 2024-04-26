@@ -10,11 +10,15 @@ import {
   PopoverFooter,
   useToast,
   IconButton,
+  Stack
 } from "@chakra-ui/react";
 import axios from "axios";
 import FilterCheckbox from "./FilterCheckbox";
 import {HamburgerIcon} from "@chakra-ui/icons";
 import { useDisclosure } from "@chakra-ui/react";
+import AddNewFilters from "./AddNewFilters";
+import DeleteFilters from "./DeleteFilters";
+
 
 function FilterPopover({ applyFilters }) {
   const [tags, setTags] = useState([]);
@@ -134,6 +138,12 @@ function FilterPopover({ applyFilters }) {
               onChange={compareCheckedFilters}
             />
           </PopoverBody>
+          <PopoverFooter>
+            <Stack direction="row" >
+          <AddNewFilters />
+          <DeleteFilters />
+        </Stack>
+          </PopoverFooter>
         </PopoverContent>
       </Popover>
     </div>

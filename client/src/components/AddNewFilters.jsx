@@ -96,15 +96,15 @@ function AddNewFilters() {
   };
 
   return (
-    <div className="container">
+    <div>
       <Popover>
         <PopoverTrigger>
           <Button colorScheme="blue" size="sm" textTransform={'uppercase'}>
-            Add Filters
+            Create Filters
           </Button>
         </PopoverTrigger>
         <PopoverContent>
-          <PopoverHeader textAlign="center">Add Filters</PopoverHeader>
+          <PopoverHeader textAlign="center">Create Filters</PopoverHeader>
           <PopoverBody>
             <Stack spacing={3} direction="column">
               <FormControl id="albumName">

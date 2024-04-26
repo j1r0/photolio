@@ -13,12 +13,7 @@ const Home = () => {
   const [photos, setPhotos] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const [filteredPhotos, setFilteredPhotos] = useState([]);
-  const  [isClicked, setIsClicked] = useState(false);
-
-  const handleClick = () => {
-    setIsClicked(!isClicked);
-  };
+  const [filteredPhotos, setFilteredPhotos] = useState([]); 
 
   useEffect(() => {
     const fetchPhotos = async () => {
@@ -112,15 +107,6 @@ const Home = () => {
       <div className='footer'>
         <Stack spacing={2} direction="row">
       <DeleteAll />
-      <Button size='sm'onClick={() => handleClick()} >Edit Filters</Button> 
-      { isClicked && (
-        <Stack spacing={2} direction="column">
-        <AddNewFilters />
-        <DeleteFilters />
-        </Stack>
-      )
-
-      }
 
       </Stack>
       </div>
