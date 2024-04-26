@@ -1,9 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
-
+ 
 .App {
   padding: 10px;
-  font-family: 'Rubik', sans-serif;
-  font-weight: 100;
+  font-family: 'Rubik', sans-serif !important;
+} 
+
+Button {
+  font-family: 'Rubik', sans-serif !important;
+  text-transform: uppercase;
 }
 .search {
   z-index: 1000;
@@ -14,27 +18,63 @@
   margin-top: 100px;
 }
 
+.navbar {
+  position: fixed;
+  z-index: 1000;
+  display: flex;
+  width: 90%;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #f8f9fa;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  left: 50%; 
+  transform: translateX(-50%); 
+}
+
+
+.navbar h1 {
+  text-transform: uppercase;
+  font-size: 2.5vw;
+  font-weight: 400;
+  margin: 0;
+  margin-left: 38px;
+}
+
+.search {
+  width: 40vw;
+  position:absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+
 .photo {
   break-inside:avoid;
   margin-bottom:1em;
-  border-radius: 20px;
   box-sizing: border-box;
   z-index: -1000;
 }
 .photo img {
   object-fit: fill;
   width: 100%;
-  border-radius: 20px;
+  border-radius: 10px;
   overflow: hidden;
   cursor: pointer;
   filter: brightness(60%) grayscale(1);
   transition: ease-in-out 0.3s;
 }
 
+
 .photo img:hover {
   transform: scale(1.02);
   transition: ease-in-out 0.3s;
   filter: none;
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 @media (min-width: 576px) {
@@ -46,19 +86,22 @@
   .photos-layout {
     column-count: 3;
     margin: 0 100px;
+    margin-top: 10vw;
   }
 }
 @media (min-width: 992px) {
   .photos-layout {
     column-count: 3;
     margin: 0 200px;
+    margin-top: 8vw;
   }
 }
 
 @media (min-width: 1200px) {
   .photos-layout {
     column-count: 3;
-    margin: 0 300px;
+    margin: 0 250px;
+    margin-top: 6vw;
 
 
   }

@@ -4,14 +4,21 @@ import axios from "axios";
 import FileUpload from "../components/FileUpload";
 import PhotosLayout from "../components/PhotosLayout";
 import DeleteAll from "../components/DeleteAll";
-import { Input, InputGroup, InputRightElement } from "@chakra-ui/react";
+import { Input, InputGroup, InputRightElement, Stack, Button } from "@chakra-ui/react";
 import FilterPopover from "../components/FilterPopover";
+import AddNewFilters from "../components/AddNewFilters";
+import DeleteFilters from "../components/DeleteFilters";
 
 const Home = () => {
   const [photos, setPhotos] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [filteredPhotos, setFilteredPhotos] = useState([]);
+  const  [isClicked, setIsClicked] = useState(false);
+
+  const handleClick = () => {
+    setIsClicked(!isClicked);
+  };
 
   useEffect(() => {
     const fetchPhotos = async () => {
@@ -30,23 +37,18 @@ const Home = () => {
       const photoTags = await getFilter(photo.photoID, "tags");
       const photoAlbums = await getFilter(photo.photoID, "albums");
       const photoCamera = await getFilter(photo.photoID, "camera/TakenWith");
-      const formattedPhotoCamera = [`${photoCamera[0].make} ${photoCamera[0].model}`];
-      console.log(checkedTags.length !== 0 && photoTags.some(tag => checkedTags.includes(tag.tagName)));
+      const formattedPhotoCamera = (photoCamera[0] !== undefined ? ([`${photoCamera[0].make} ${photoCamera[0].model}`]) : []);
       if (
         (checkedTags.length !== 0 && photoTags.some(tag => checkedTags.includes(tag.tagName))) ||
         (checkedAlbums.length !== 0 && photoAlbums.some(album => checkedAlbums.includes(album.albumName))) ||
         (checkedCamera.length !== 0 && checkedCamera.includes(formattedPhotoCamera[0]))
       ) {
-        console.log("worked!")
-        return photo; // Include the photo in filtered results
+        return photo;
       }
-      return null; // Exclude the photo from filtered results
+      return null; 
     }));
   
     const validPhotos = filtered.filter(photo => photo !== null);
-  
-    console.log("Checked filters", checkedAlbums, checkedCamera, checkedTags);
-    console.log("Filtered photos", validPhotos);
   
     setSearchResults([]);
     setFilteredPhotos(validPhotos);
@@ -90,20 +92,38 @@ const Home = () => {
               value={searchTerm}
               onChange={onSearchChange}
             />
-            <InputRightElement w="4.5rem">
+            <InputRightElement >
               <FilterPopover applyFilters={applyFilters} />
             </InputRightElement>
           </InputGroup>
         </div>
+        <div className="upload">
         <FileUpload />
+        </div>
       </div>
+      <div className="photos">
       {(searchResults.length > 0 || filteredPhotos.length > 0) && (
         <PhotosLayout photos={searchResults.length > 0 ? searchResults : filteredPhotos} />
       )}
       {searchResults.length === 0 && filteredPhotos.length === 0 && (
         <PhotosLayout photos={photos} />
       )}
+      </div>
+      <div className='footer'>
+        <Stack spacing={2} direction="row">
       <DeleteAll />
+      <Button size='sm'onClick={() => handleClick()} >Edit Filters</Button> 
+      { isClicked && (
+        <Stack spacing={2} direction="column">
+        <AddNewFilters />
+        <DeleteFilters />
+        </Stack>
+      )
+
+      }
+
+      </Stack>
+      </div>
     </>
   );
 };

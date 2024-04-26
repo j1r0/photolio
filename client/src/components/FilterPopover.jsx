@@ -6,12 +6,15 @@ import {
   PopoverContent,
   PopoverHeader,
   PopoverBody,
+  PopoverArrow,
   PopoverFooter,
   useToast,
-  filter,
+  IconButton,
 } from "@chakra-ui/react";
 import axios from "axios";
 import FilterCheckbox from "./FilterCheckbox";
+import {HamburgerIcon} from "@chakra-ui/icons";
+import { useDisclosure } from "@chakra-ui/react";
 
 function FilterPopover({ applyFilters }) {
   const [tags, setTags] = useState([]);
@@ -23,7 +26,15 @@ function FilterPopover({ applyFilters }) {
   const [filteredTags, setFilteredTags] = useState([]);
   const [filteredAlbums, setFilteredAlbums] = useState([]);
   const [filteredCamera, setFilteredCamera] = useState([]);
+  const [isRotated, setIsRotated] = useState(false);
+  const { onOpen, onClose, isOpen } = useDisclosure()
+
+  const handleRotate = () => {
+    setIsRotated(!isRotated);
+  };
+
   const toast = useToast();
+
 
   useEffect(() => {
     getAllFilters();
@@ -80,14 +91,23 @@ function FilterPopover({ applyFilters }) {
 
   return (
     <div>
-      <Popover>
+      <Popover 
+            onOpen = {() => {onOpen(); handleRotate();}}
+            onClose = {() => {onClose(); handleRotate();}}>
         <PopoverTrigger>
-          <Button h="1.75rem" mr="0.5rem" size="sm">
-            FILTER
-          </Button>
+          <IconButton
+            aria-label="Filter"
+            variant= 'link'
+            size='xl'
+            mt= '9px'
+            icon={<HamburgerIcon />}
+            
+            transform={isRotated ? "rotate(90deg)" : ""}
+          />
         </PopoverTrigger>
         <PopoverContent>
-          <PopoverHeader>Filter Photos</PopoverHeader>
+        <PopoverArrow />
+          <PopoverHeader textAlign ='center'>Filter Photos</PopoverHeader>
           <PopoverBody>
             <FilterCheckbox
               checkboxName="Camera"

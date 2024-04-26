@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Button, useToast } from "@chakra-ui/react";
+import {componentsCSS} from "./components.css";
 
 function FileDelete(photo) {
   const [photoID] = useState(photo.photoID);
@@ -48,7 +49,7 @@ function FileDelete(photo) {
 
   return (
     <div className="container">
-      <Button onClick={handleDelete} colorScheme="red" boxShadow="md">
+      <Button onClick={handleDelete} colorScheme="red" boxShadow="md" >
         DELETE
       </Button>
     </div>

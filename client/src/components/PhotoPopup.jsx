@@ -3,7 +3,7 @@ import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import FileDelete from "./FileDelete";
 import FileUpdate from "./FileUpdate";
-import ModalStyle from "./ModalStyle.css";
+import  componentsCSS from "./components.css";
 import {
   Modal,
   ModalOverlay,
@@ -31,7 +31,6 @@ export default function PhotoPopup({ photo }) {
       .get(`http://localhost:8800/Photos/${photo.photoID}/tags`)
       .then((res) => {
         setTags(res.data);
-        console.log("tags: ", res.data);
       })
       .catch((err) => {
         console.error(err);
@@ -43,7 +42,6 @@ export default function PhotoPopup({ photo }) {
       .get(`http://localhost:8800/Photos/${photo.photoID}/camera/TakenWith`)
       .then((res) => {
         setCamera(res.data);
-        console.log("camera: ", res.data);
       })
       .catch((err) => {
         console.error(err);
@@ -55,7 +53,6 @@ export default function PhotoPopup({ photo }) {
       .get(`http://localhost:8800/Photos/${photo.photoID}/albums`)
       .then((res) => {
         setAlbums(res.data);
-        console.log("albums: ", res.data);
       })
       .catch((err) => {
         console.error(err);

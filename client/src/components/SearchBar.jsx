@@ -17,7 +17,6 @@ const SearchBar = ({searchTerm}, {onSearchChange}) => {
                 placeholder="Search..."
                 value={searchTerm}
                 onChange={onSearchChange}
-
             />
                 <InputRightElement w='4.5rem'>
             <Button h='1.75rem'mr='0.5rem' size ='sm' > Search

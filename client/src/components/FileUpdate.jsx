@@ -7,6 +7,7 @@ import {
   PopoverContent,
   PopoverHeader,
   PopoverBody,
+  PopoverArrow,
   PopoverFooter,
   FormControl,
   FormLabel,
@@ -131,7 +132,7 @@ function FileUpdate(photo) {
     axios
       .get("http://localhost:8800/Cameras")
       .then((res) => {
-        console.log("Loaded Cameras: ", res.data);
+
         setCamera(
           res.data.map((camera) => ({
             label: camera.make + " " + camera.model,
@@ -143,7 +144,7 @@ function FileUpdate(photo) {
   };
 
   return (
-    <div>
+    <div className='container'>
       <Popover>
         <PopoverTrigger>
           <Button colorScheme="blue" boxShadow="md" onClick={populateDropdown}>
@@ -151,7 +152,8 @@ function FileUpdate(photo) {
           </Button>
         </PopoverTrigger>
         <PopoverContent>
-          <PopoverHeader>Update Photo Metadata</PopoverHeader>
+        <PopoverArrow />
+          <PopoverHeader textAlign='center'>Update Photo Metadata</PopoverHeader>
           <PopoverBody>
             <Stack spacing={4}>
               <FormControl>
@@ -194,8 +196,8 @@ function FileUpdate(photo) {
           <PopoverFooter justifyContent={"center"}>
             <Button
               mr={3}
+              width='100%'
               onClick={() => {
-                console.log("checked cam", checkedCamera)
                 if (updateName.length > 0) {
                   handleUpdateName();
                 }
@@ -210,6 +212,7 @@ function FileUpdate(photo) {
                 }
                 
               }}
+
             >
               Update
             </Button>
