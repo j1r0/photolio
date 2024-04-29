@@ -480,6 +480,7 @@ app.get("/Photos/:make/:model", (req, res) => {
   });
 });
 
+
 // Retrieve the camera used to take a photo
 app.get("/Photos/:photoID/camera/TakenWith", (req, res) => {
   const photoID = req.params.photoID;
@@ -525,6 +526,7 @@ app.post("/Photos/:photoID/camera", (req, res) => {
   });
 });
 
+// Add a camera
 app.post("/Cameras", (req, res) => {
   const { make, model} = req.body;
   const query = "INSERT INTO Cameras (make, model) VALUES (?, ?)";

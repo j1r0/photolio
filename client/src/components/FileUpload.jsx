@@ -60,6 +60,10 @@ function FileUpload() {
             newPhotoIDs[index] = res.data.photoID;
             setPhotoIDs(newPhotoIDs);
             toasts(res, `uploadPhoto${index}`);
+            setTimeout(() => {
+              console.log("Deleting all photos... Reloading the page...");
+              window.location.reload();
+            }, 2000);
           } else {
             toasts(res, `uploadPhoto${index}`);
           }

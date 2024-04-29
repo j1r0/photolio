@@ -38,7 +38,7 @@ function FileUpdate(photo) {
         toast({
           id,
           title: res.data.Status,
-          description: res.data.Message + ". " + "Please reload the page to see changes.",
+          description: res.data.Message + ". ",
           status: "success",
           duration: 1000,
           position: "top-left",
@@ -198,7 +198,7 @@ function FileUpdate(photo) {
               mr={3}
               width='100%'
               onClick={() => {
-                if (updateName.length > 0) {
+                if (updateName.fileName !== undefined) {
                   handleUpdateName();
                 }
                 if (checkedTags.length > 0) {
