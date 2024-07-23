@@ -75,7 +75,7 @@ const Home = () => {
   return (
     <>
       <div className="navbar">
-        <h1>Photolio</h1>
+        <h1>Visionary</h1>
         <div className="search">
           <InputGroup size="lg">
             <Input
